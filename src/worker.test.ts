@@ -1,4 +1,3 @@
-import { PANEL_URI } from './index';
 import worker, { optionsFromEnv } from './worker';
 
 describe('the Cloudflare Worker', () => {
@@ -17,9 +16,18 @@ describe('the Cloudflare Worker', () => {
     it('serves under its base path, reusing one handler per environment', async () => {
         const env = { BASE_PATH: '/chatgpt-webmcp-bridge', DEMO_URL: 'none' };
 
+        type ListResult = { readonly result : { readonly resources : ReadonlyArray<{ readonly uri : string }> } };
+
+        const listed = await (await worker.fetch(new Request('https://w.example/chatgpt-webmcp-bridge/mcp', {
+            method: 'POST',
+            body:   JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'resources/list' })
+        }), env)).json() as ListResult;
+
+        const uri = listed.result.resources[0]?.uri;
+
         const call = () : Promise<Response> => worker.fetch(new Request('https://w.example/chatgpt-webmcp-bridge/mcp', {
             method: 'POST',
-            body:   JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'resources/read', params: { uri: PANEL_URI } })
+            body:   JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'resources/read', params: { uri } })
         }), env);
 
         type ReadResult = { readonly result : { readonly contents : ReadonlyArray<{ readonly text : string }> } };

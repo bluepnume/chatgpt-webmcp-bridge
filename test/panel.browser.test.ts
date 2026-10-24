@@ -155,7 +155,7 @@ describe('the user opening a page', () => {
 
         const message = await host.waitForChat(1);
 
-        expect(host.text('tools')).toBe('No tools found on this page');
+        expect(host.text('tools')).toContain('No tools found on this page');
         expect(message.text).toContain('✗ Opened [::1]');
         expect(message.data).toMatchObject({ opened_by: 'model', tools: [] });
     });
@@ -254,7 +254,7 @@ describe('running a call', () => {
 
         host.callTool({ url: pageUrl('empty'), tool: 'anything' });
 
-        expect((await host.waitForChat(1)).data).toMatchObject({ ok: false, error: `The page loaded, but it offers no tools (it needs glottis tools, or WebMCP tools exposed to this panel).` });
+        expect((await host.waitForChat(1)).data).toMatchObject({ ok: false, error: expect.stringContaining(`The page loaded, but it offers no tools`) as unknown });
     });
 
     it('does not run a call twice when ChatGPT shows the panel again', async () => {

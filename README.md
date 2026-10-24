@@ -36,7 +36,7 @@ That server is a best-effort demo instance. To run your own, see [Run your own s
 | You want to | Read |
 | --- | --- |
 | Try the plugin | [1. Try it](docs/1-try-it.md) |
-| Let ChatGPT use your own page (works everywhere) | [2. Your page with glottis](docs/2-your-page-with-glottis.md) |
+| Let ChatGPT use your own page | [2. Your page with glottis](docs/2-your-page-with-glottis.md) |
 | Test a page that uses WebMCP directly | [3. True WebMCP mode](docs/3-true-webmcp-mode.md) |
 | Host the server yourself | [4. Run your own server](docs/4-run-your-own-server.md) |
 | Give your ChatGPT connection an icon, prompts and description | [5. The ChatGPT connection and plugin ZIP](docs/5-chatgpt-connection.md) |
@@ -53,6 +53,7 @@ ChatGPT runs plugin UIs in sandboxed frames. This plugin's frame, the **panel**,
 Experimental, and version 0.x: things will change.
 
 - **Developer mode only.** ChatGPT's app directory does not accept apps that embed other pages, which is this plugin's whole job.
+- **The panel only shows pages it was set up for.** ChatGPT lets a plugin frame only the origins it lists, exactly, with no wildcards. The demo instance lists only the demo shop; to use your own page, run your own server with your page's origin added (see [4. Run your own server](docs/4-run-your-own-server.md)).
 - **Native WebMCP needs a workaround.** ChatGPT does not give its plugin frames the `tools` permission, so true WebMCP mode needs the launcher in [3. True WebMCP mode](docs/3-true-webmcp-mode.md).
 
 ## License

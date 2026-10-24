@@ -58,8 +58,10 @@ serve({
 
 ## Step 3: try it
 
-1. Open the bridge in ChatGPT (see [1. Try it](1-try-it.md)).
-2. Type your page's address into the panel's address bar.
+ChatGPT only lets the panel show origins its server lists, so your page needs a bridge server of your own that lists it:
+
+1. Run one with your page's origin in its frame domains, e.g. `FRAME_DOMAINS = "https://shop.example"` (see [4. Run your own server](4-run-your-own-server.md)), and add it to ChatGPT.
+2. Open the bridge in ChatGPT, and type your page's address into the panel's address bar.
 3. The status bar lists your tools, with "· glottis" after them, and ChatGPT says what it can do.
 
 ## Step 4 (optional): ask the user first

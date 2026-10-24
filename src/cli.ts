@@ -24,6 +24,7 @@ Commands:
                  --host <name>       default 127.0.0.1
                  --base-path <path>  e.g. /chatgpt-webmcp-bridge (default: none)
                  --demo-url <url>    the panel's Try button, or "none"
+                 --frame-domains <origins>  comma-separated origins the panel may show
   chrome       Open Chrome with WebMCP on and the "tools" permission on every frame.
                  --profile <dir>     default ~/.chatgpt-webmcp-bridge/chrome-profile
                  --url <url>         default https://chatgpt.com/
@@ -74,16 +75,17 @@ const untilInterrupted = () : Promise<void> => new Promise<void>(resolve => {
 });
 
 const OPTIONS = {
-    'port':      { type: 'string' },
-    'host':      { type: 'string' },
-    'base-path': { type: 'string' },
-    'demo-url':  { type: 'string' },
-    'profile':   { type: 'string' },
-    'url':       { type: 'string' },
-    'channel':   { type: 'string' },
-    'app-id':    { type: 'string' },
-    'out':       { type: 'string' },
-    'help':      { type: 'boolean', short: 'h' }
+    'port':          { type: 'string' },
+    'host':          { type: 'string' },
+    'base-path':     { type: 'string' },
+    'demo-url':      { type: 'string' },
+    'frame-domains': { type: 'string' },
+    'profile':       { type: 'string' },
+    'url':           { type: 'string' },
+    'channel':       { type: 'string' },
+    'app-id':        { type: 'string' },
+    'out':           { type: 'string' },
+    'help':          { type: 'boolean', short: 'h' }
 } as const;
 
 type MainOptions = {
@@ -141,7 +143,10 @@ export const main = async ({ argv, output = console, deps = {} } : MainOptions) 
                             demoUrl: values[`demo-url`] === `none`
                                 ? null
                                 : values[`demo-url`]
-                        }
+                        },
+                    ...values['frame-domains'] === undefined
+                        ? {}
+                        : { frameDomains: values[`frame-domains`].split(`,`).map(origin => origin.trim()).filter(Boolean) }
                 });
 
                 output.log(`${ PACKAGE_NAME } is running at ${ running.url }${ values['base-path'] ?? '' }/mcp\nChatGPT needs public https: put a tunnel in front of it, then add the tunnel's URL (ending in /mcp) as a custom MCP server.`);

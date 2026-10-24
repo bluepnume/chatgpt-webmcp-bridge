@@ -40,7 +40,6 @@ A fresh panel opens for the call, the older one folds away to one line, the mug 
 - *What's in my cart?*
 - *Add two stickers and a black T-shirt, then tell me the total.*
 - *Empty my cart.*
-- Type another page's address into the panel's address bar.
 
 ## Next
 

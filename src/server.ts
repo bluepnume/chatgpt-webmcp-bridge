@@ -21,8 +21,8 @@ export type BridgeServerOptions = {
     readonly basePath ?: string,
     // The page the panel's "Try" button opens. null removes the button.
     readonly demoUrl ?: string | null,
-    // Origins the panel may frame, declared in the panel's security settings.
-    // ChatGPT's developer mode does not enforce them; a published app would.
+    // Origins of the pages the panel may show, besides the demo's. ChatGPT
+    // only lets the panel frame origins listed here, exactly: no wildcards.
     readonly frameDomains ?: ReadonlyArray<string>,
 };
 
@@ -73,27 +73,42 @@ class RpcError extends Error {
     }
 }
 
-type InstructionsForOptions = { readonly demoUrl : string | null };
+type InstructionsForOptions = { readonly demoUrl : string | null, readonly framedOrigins : ReadonlyArray<string> };
 
-const instructionsFor = ({ demoUrl } : InstructionsForOptions) : string => [
+const instructionsFor = ({ demoUrl, framedOrigins } : InstructionsForOptions) : string => [
     'This server lets you use the tools a web page offers, in a small browser panel in the chat.',
     `Call ${ TOOL_NAME.OPEN_BROWSER } to open the panel, optionally at a url; with no url the user picks a page${
         demoUrl
             ? ` (a demo shop, ${ demoUrl }, is one click away)`
             : ''
-        }.`,
+        }. The panel can only show pages on these origins: ${ framedOrigins.join(', ') || 'none' }.`,
     `With a url, the page's tools arrive afterwards as a short message beginning "✓ Opened" with the tools attached as JSON: end your turn briefly, then carry on with the user's request when it arrives. The tools of a page the user opened arrive the same way, and are also in the conversation context.`,
     `To use one, call ${ TOOL_NAME.CALL_SITE_TOOL } with "url" (that page), "tool" (the tool name) and "arguments" (an object). The page runs it in the user's browser, and its real result arrives afterwards as a short message naming the call, with the result attached as JSON. Do not guess the result: say briefly that the request was sent, then answer from that message when it arrives.`
 ].join(' ');
 
 type ServerSetup = {
     readonly demoUrl : string | null,
+    readonly framedOrigins : ReadonlyArray<string>,
+    readonly panelUri : string,
     readonly panelMeta : Readonly<Record<string, unknown>>,
 };
 
-const toolsFor = ({ demoUrl } : ServerSetup) : ReadonlyArray<Readonly<Record<string, unknown>>> => {
+// A short, stable hash, to tell one set of settings from another.
+const shortHash = (text : string) : string => {
+    let hash = 7;
+
+    for (const character of text) {
+        hash = ((hash * 31) + (character.codePointAt(0) ?? 0)) % 2_147_483_647;
+    }
+
+    return hash.toString(36);
+};
+
+type Tool = Readonly<Record<string, unknown>>;
+
+const toolsFor = ({ demoUrl, framedOrigins, panelUri } : ServerSetup) : ReadonlyArray<Tool> => {
     // Which panel ChatGPT opens for the tool. The panel's own settings ride on the resource.
-    const uiMeta = { ui: { resourceUri: PANEL_URI } };
+    const uiMeta = { ui: { resourceUri: panelUri } };
 
     return [
         {
@@ -103,7 +118,7 @@ const toolsFor = ({ demoUrl } : ServerSetup) : ReadonlyArray<Readonly<Record<str
                 demoUrl
                     ? ' or tries the demo shop'
                     : ''
-                }.`,
+                }. Only pages on these origins can be shown: ${ framedOrigins.join(', ') || 'none' }.`,
             inputSchema: {
                 type:       'object',
                 properties: {
@@ -204,10 +219,10 @@ type DispatchOptions = {
 
 const dispatch = ({ message, setup, panelHtml } : DispatchOptions) : Readonly<Record<string, unknown>> => {
     const params = message.params ?? {};
-    const instructions = instructionsFor({ demoUrl: setup.demoUrl });
+    const instructions = instructionsFor({ demoUrl: setup.demoUrl, framedOrigins: setup.framedOrigins });
 
     const panelResource = {
-        uri:      PANEL_URI,
+        uri:      setup.panelUri,
         name:     'panel',
         title:    'WebMCP bridge panel',
         mimeType: PANEL_MIME_TYPE,
@@ -260,7 +275,7 @@ const dispatch = ({ message, setup, panelHtml } : DispatchOptions) : Readonly<Re
                 ? params.uri
                 : '';
 
-            if (uri !== PANEL_URI) {
+            if (uri !== setup.panelUri) {
                 throw new RpcError({ code: JSON_RPC_ERROR.INVALID_PARAMS, message: `Unknown resource: ${ uri }` });
             }
 
@@ -369,12 +384,19 @@ export const createBridgeHandler = ({ basePath = ``, demoUrl = DEFAULT_DEMO_URL,
     const base = normalizeBasePath(basePath);
     const endpoint = `${ base }/mcp`;
 
+    // The demo's origin is always framed, so the Try button works.
+    const framedOrigins = [ ...new Set([ ...demoUrl
+        ? [ new URL(demoUrl).origin ]
+        : [], ...frameDomains ]) ];
+
     const setup : ServerSetup = {
         demoUrl,
+        framedOrigins,
+        panelUri:  `${ PANEL_URI }-${ shortHash(JSON.stringify({ demoUrl, framedOrigins })) }`,
         panelMeta: {
             'ui': {
                 prefersBorder: true,
-                csp:           { resourceDomains: [], connectDomains: [], frameDomains: [ ...frameDomains ] }
+                csp:           { resourceDomains: [], connectDomains: [], frameDomains: framedOrigins }
             },
             'openai/ui': { availableDisplayModes: [ 'inline' ], preferredDisplayMode: 'inline' }
         }

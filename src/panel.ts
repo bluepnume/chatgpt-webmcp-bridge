@@ -82,7 +82,7 @@ const visits = { entries: [] as Array<string>, index: -1 };
 let loads = 0;
 let disconnectCurrent : (() => Promise<void>) | undefined;
 // Why the last load has no tools, for the messages to the model.
-const NO_TOOLS = 'it offers no tools (it needs glottis tools, or WebMCP tools exposed to this panel)';
+const NO_TOOLS = `it offers no tools (it needs glottis tools or WebMCP tools exposed to this panel, and its origin must be in the server's frame domains)`;
 let refusal = NO_TOOLS;
 
 const renderNav = () : void => {
@@ -207,7 +207,7 @@ const showPage = (api : PageApi) : void => {
 
 const showNoTools = () : void => {
     refusal = NO_TOOLS;
-    element('tools').textContent = 'No tools found on this page';
+    element(`tools`).textContent = `No tools found on this page (blank? its origin may not be in the server's frame domains)`;
 
     if (!calling) {
         setStatus('Loaded');

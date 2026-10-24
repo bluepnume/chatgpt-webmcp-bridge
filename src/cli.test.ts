@@ -44,7 +44,7 @@ describe('the command line', () => {
         let closed = false;
 
         const code = await main({
-            argv: [ 'serve', '--port', '9000', '--host', '0.0.0.0', '--base-path', '/bridge', '--demo-url', 'none' ],
+            argv: [ `serve`, `--port`, `9000`, `--host`, `0.0.0.0`, `--base-path`, `/bridge`, `--demo-url`, `none`, `--frame-domains`, `https://a.example, https://b.example` ],
             output,
             deps: {
                 serve: options => {
@@ -67,7 +67,15 @@ describe('the command line', () => {
         });
 
         expect(code).toBe(0);
-        expect(calls).toEqual([ { port: 9000, hostname: '0.0.0.0', basePath: '/bridge', demoUrl: null } ]);
+
+        expect(calls).toEqual([ {
+            port:         9000,
+            hostname:     '0.0.0.0',
+            basePath:     '/bridge',
+            demoUrl:      null,
+            frameDomains: [ 'https://a.example', 'https://b.example' ]
+        } ]);
+
         expect(logs[0]).toContain('http://0.0.0.0:9000/bridge/mcp');
         expect(closed).toBe(true);
     });

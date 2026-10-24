@@ -17,7 +17,7 @@ Returns `(request : Request) => Promise<Response>`.
 | --- | --- | --- |
 | `basePath` | `''` | The MCP endpoint is `<basePath>/mcp`; a GET on `<basePath>/` shows a help page. |
 | `demoUrl` | the hosted demo shop | The panel's **Try** button; `null` removes it. |
-| `frameDomains` | `[]` | Origins declared in the panel's security settings. |
+| `frameDomains` | `[]` | Origins of the pages the panel may show, besides the demo's. Exact origins only: ChatGPT ignores wildcards. |
 
 The endpoint takes MCP over streamable HTTP, in both of ChatGPT's protocol generations (2025, with `initialize`; and 2026, with the version in `_meta`). It answers `initialize`, `server/discover`, `ping`, `tools/list`, `tools/call`, `resources/list`, `resources/templates/list` and `resources/read`. GET on the endpoint answers 405, because there is no event stream.
 
@@ -28,7 +28,7 @@ The handler's options, plus `port` (default `8787`; `0` for any free port) and `
 ## The CLI
 
 ```
-npx chatgpt-webmcp-bridge serve [--port <n>] [--host <name>] [--base-path <path>] [--demo-url <url|none>]
+npx chatgpt-webmcp-bridge serve [--port <n>] [--host <name>] [--base-path <path>] [--demo-url <url|none>] [--frame-domains <origin,…>]
 npx chatgpt-webmcp-bridge chrome [--profile <dir>] [--url <url>] [--channel <name>]
 npx chatgpt-webmcp-bridge plugin-zip --app-id <asdk_app_…> [--out <file>]
 ```

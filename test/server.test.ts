@@ -45,6 +45,26 @@ const rpc = async ({ method, params, id = 1, path = `/mcp`, headers = {}, handle
 
 const MODERN = { _meta: { 'io.modelcontextprotocol/protocolVersion': '2026-07-28' } };
 
+type ListedResource = { readonly uri : string };
+
+// The panel's URI for a handler, as it lists it.
+const panelUriOf = async (handler ?: ReturnType<typeof createBridgeHandler>) : Promise<string> => {
+    const { body } = await rpc({
+        method: 'resources/list',
+        ...handler
+            ? { handler }
+            : {}
+    });
+
+    const [ resource ] = body.result?.resources as ReadonlyArray<ListedResource>;
+
+    if (!resource) {
+        throw new Error('No panel resource listed');
+    }
+
+    return resource.uri;
+};
+
 describe('the 2025 protocol', () => {
     it('answers initialize with the version asked for, or the newest it knows', async () => {
         const known = await rpc({ method: 'initialize', params: { protocolVersion: '2025-06-18' } });
@@ -62,7 +82,9 @@ describe('the 2025 protocol', () => {
         const tools = body.result?.tools as ReadonlyArray<Tool>;
 
         expect(tools.map(tool => tool.name)).toEqual([ TOOL_NAME.OPEN_BROWSER, TOOL_NAME.CALL_SITE_TOOL ]);
-        expect(tools.every(tool => tool._meta.ui.resourceUri === PANEL_URI)).toBe(true);
+        const uri = await panelUriOf();
+
+        expect(tools.every(tool => tool._meta.ui.resourceUri === uri)).toBe(true);
         // The 2025 protocol has no result wrapper.
         expect(body.result?.resultType).toBeUndefined();
     });
@@ -109,25 +131,49 @@ describe('the 2026 protocol', () => {
 describe('the panel resource', () => {
     it('is listed and read, with the demo URL in the panel', async () => {
         const listed = await rpc({ method: 'resources/list', params: MODERN });
-        const read = await rpc({ method: 'resources/read', params: { ...MODERN, uri: PANEL_URI } });
+        const read = await rpc({ method: 'resources/read', params: { ...MODERN, uri: await panelUriOf() } });
         type Content = { readonly text : string, readonly mimeType : string, readonly uri : string };
 
         const [ content ] = read.body.result?.contents as ReadonlyArray<Content>;
 
-        expect((listed.body.result?.resources as ReadonlyArray<{ readonly uri : string }>)[0]?.uri).toBe(PANEL_URI);
+        expect((listed.body.result?.resources as ReadonlyArray<ListedResource>)[0]?.uri.startsWith(`${ PANEL_URI }-`)).toBe(true);
         expect(read.body.result).toMatchObject({ ttlMs: 300_000, cacheScope: 'public' });
         expect(content?.mimeType).toBe('text/html;profile=mcp-app');
         expect(content?.text).toContain('<!doctype html>');
         expect(content?.text).toContain(JSON.stringify(DEFAULT_DEMO_URL));
     });
 
+    it('changes its URI when the settings change, so ChatGPT loads it afresh', async () => {
+        const plain = await panelUriOf(createBridgeHandler());
+        const again = await panelUriOf(createBridgeHandler());
+        const framed = await panelUriOf(createBridgeHandler({ frameDomains: [ 'https:' ] }));
+        const noDemo = await panelUriOf(createBridgeHandler({ demoUrl: null }));
+
+        expect(again).toBe(plain);
+        expect(new Set([ plain, framed, noDemo ]).size).toBe(3);
+    });
+
     it('carries no demo button when demoUrl is null', async () => {
         const handler = createBridgeHandler({ demoUrl: null });
-        const read = await rpc({ method: 'resources/read', params: { uri: PANEL_URI }, handler });
+        const read = await rpc({ method: 'resources/read', params: { uri: await panelUriOf(handler) }, handler });
         const [ content ] = read.body.result?.contents as ReadonlyArray<{ readonly text : string }>;
 
         expect(content?.text).toContain('{"demoUrl":null}');
         expect(String((await rpc({ method: `initialize`, handler })).body.result?.instructions)).not.toContain(`demo shop`);
+    });
+
+    it('always frames the demo\'s origin, and tells the model which sites work', async () => {
+        const { body } = await rpc({ method: 'resources/list' });
+        type Csp = { readonly frameDomains : ReadonlyArray<string> };
+        type FramedResource = { readonly _meta : { readonly ui : { readonly csp : Csp } } };
+
+        const [ resource ] = body.result?.resources as ReadonlyArray<FramedResource>;
+        const instructions = String((await rpc({ method: 'initialize' })).body.result?.instructions);
+        const noDemo = String((await rpc({ method: `initialize`, handler: createBridgeHandler({ demoUrl: null }) })).body.result?.instructions);
+
+        expect(resource?._meta.ui.csp.frameDomains).toEqual([ 'https://bluepnume.github.io' ]);
+        expect(instructions).toContain('only show pages on these origins: https://bluepnume.github.io');
+        expect(noDemo).toContain('these origins: none');
     });
 
     it('declares the frame domains it was given', async () => {
@@ -140,7 +186,7 @@ describe('the panel resource', () => {
 
         const [ resource ] = body.result?.resources as ReadonlyArray<Resource>;
 
-        expect(resource?._meta.ui.csp.frameDomains).toEqual([ 'https://shop.example' ]);
+        expect(resource?._meta.ui.csp.frameDomains).toEqual([ 'https://bluepnume.github.io', 'https://shop.example' ]);
     });
 
     it('refuses an unknown resource', async () => {

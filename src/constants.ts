@@ -2,10 +2,12 @@
 
 export const PACKAGE_NAME = 'chatgpt-webmcp-bridge';
 
-// Kept in step with package.json by a test. ChatGPT caches the panel by its
-// URI, so the URI carries the version and a new release loads a new panel.
+// Kept in step with package.json by a test.
 export const VERSION = '0.1.0';
 
+// ChatGPT caches the panel, and its security settings, by the panel's URI.
+// So the URI carries the version, and the server adds a hash of its settings:
+// a new release or new settings load a new panel.
 export const PANEL_URI = `ui://${ PACKAGE_NAME }/panel-${ VERSION }`;
 
 export const PANEL_MIME_TYPE = 'text/html;profile=mcp-app';

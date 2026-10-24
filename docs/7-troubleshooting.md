@@ -33,13 +33,16 @@ Results arrive as a message after the call, so the model must wait for it. The s
 
 ## In the panel
 
-**"No tools found on this page".**
+**The page is blank, and the panel says "No tools found on this page".**
+Most likely its origin isn't in the server's frame domains: ChatGPT blocks the frame (the browser console shows `frame-src` blocking it). Add the exact origin to `FRAME_DOMAINS` (see [4. Run your own server](4-run-your-own-server.md)), deploy, then **Refresh tools**. Wildcards such as `https:` or `*` are ignored.
+
+**"No tools found on this page", and the page shows.**
 The page answered neither route. Check that:
 - it serves tools with glottis (see [2. Your page with glottis](2-your-page-with-glottis.md)), and that `tool()` wraps them;
 - its `clients.remoteWindow.domain` allows the panel's origin (`'*'` allows everyone);
 - for native WebMCP, see the next item.
 
-**The page shows a blank frame, or "refused to connect".**
+**The page shows "refused to connect".**
 The page doesn't allow being framed. Remove `X-Frame-Options`, and make `frame-ancestors` allow `https://*.web-sandbox.oaiusercontent.com`.
 
 **"Access declined in the page".**

@@ -40,7 +40,7 @@ Set these as variables in `wrangler.toml`:
 [vars]
 BASE_PATH = "/chatgpt-webmcp-bridge"            # the URL becomes …/chatgpt-webmcp-bridge/mcp
 DEMO_URL = "none"                               # no Try button; or your own demo page's URL
-FRAME_DOMAINS = "https://shop.example"          # pages the panel may frame (see below)
+FRAME_DOMAINS = "https://shop.example"          # the pages the panel may show (see below)
 ```
 
 To serve it on your own domain, add a route, e.g. `routes = [ { pattern = "bridge.example.com", custom_domain = true } ]`.
@@ -59,7 +59,7 @@ This starts the server at `http://127.0.0.1:8787/mcp`. ChatGPT can't reach `loca
 
 Then add the tunnel's https URL, ending in `/mcp`, as a custom MCP server.
 
-Options: `--port <n>`, `--host <name>`, `--base-path <path>`, `--demo-url <url|none>`. Ctrl-C stops it.
+Options: `--port <n>`, `--host <name>`, `--base-path <path>`, `--demo-url <url|none>`, `--frame-domains <origin,origin>`. Ctrl-C stops it.
 
 From code:
 
@@ -88,9 +88,11 @@ Deno.serve(handle);
 | --- | --- | --- | --- |
 | `basePath` | `BASE_PATH` | none | Where the server lives; the MCP endpoint is `<basePath>/mcp`. |
 | `demoUrl` | `DEMO_URL` | the hosted demo shop | The page the panel's **Try** button opens. `null` (or `none`) removes the button. |
-| `frameDomains` | `FRAME_DOMAINS` | none | Origins the panel declares it may frame. Developer mode doesn't enforce this; a published app would. |
+| `frameDomains` | `FRAME_DOMAINS` | none | The origins of the pages the panel may show, besides the demo's (always included). ChatGPT only lets the panel frame origins listed here: exact origins such as `https://shop.example`, no wildcards. The model is told the list. |
 
 A GET on `<basePath>/` shows a short page with the URL to add to ChatGPT, handy for checking a deployment.
+
+Changing the settings changes the panel's identity, so ChatGPT picks the new settings up after **Refresh tools**.
 
 ## After you deploy
 

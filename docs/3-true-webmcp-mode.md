@@ -50,7 +50,7 @@ await document.modelContext.registerTool({
 
 ## Step 3: load your page
 
-1. In the launcher's Chrome, open the bridge in ChatGPT (see [1. Try it](1-try-it.md)).
+1. In the launcher's Chrome, open the bridge in ChatGPT, using a server whose frame domains include your page's origin (see [4. Run your own server](4-run-your-own-server.md)).
 2. Type your page's address into the panel's address bar.
 3. The status bar lists your tools with "· native WebMCP".
 
