@@ -81,8 +81,11 @@ describe('the demo shop', () => {
         const declined = await openShop({ cart });
         const refusing = shopConnect(declined.frame);
 
+        // Handle the refusal before clicking, so it never rejects unhandled.
+        const refused = expect(refusing).rejects.toThrow('The user declined to let this site use the shop.');
+
         await page.frameLocator(page.getByTitle(declined.title)).getByRole('button', { name: 'Don\'t allow' }).click();
-        await expect(refusing).rejects.toThrow('The user declined to let this site use the shop.');
+        await refused;
 
         const allowed = await openShop({ cart });
         const allowing = shopConnect(allowed.frame);

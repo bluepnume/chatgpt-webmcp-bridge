@@ -184,7 +184,8 @@ describe('the model opening a page', () => {
         const message = await host.waitForChat(1);
 
         expect(host.text('tools')).toBe('Access declined in the page');
-        expect(host.text('status')).not.toBe('Declined');
+        // The status moves on once ChatGPT accepts the message, a moment after it arrives.
+        await expect.poll(() => host.text('status')).not.toBe('Declined');
         expect(JSON.stringify(message.data)).toContain('declined');
     });
 });
