@@ -83,7 +83,7 @@ const instructionsFor = ({ demoUrl, framedOrigins } : InstructionsForOptions) : 
             : ''
         }. The panel can only show pages on these origins: ${ framedOrigins.join(', ') || 'none' }.`,
     `With a url, the page's tools arrive afterwards as a short message beginning "✓ Opened" with the tools attached as JSON: end your turn briefly, then carry on with the user's request when it arrives. The tools of a page the user opened arrive the same way, and are also in the conversation context.`,
-    `To use one, call ${ TOOL_NAME.CALL_SITE_TOOL } with "url" (that page), "tool" (the tool name) and "arguments" (an object). The page runs it in the user's browser, and its real result arrives afterwards as a short message naming the call, with the result attached as JSON. Do not guess the result: say briefly that the request was sent, then answer from that message when it arrives.`
+    `To use one, call ${ TOOL_NAME.CALL_SITE_TOOL } with "url" (that page), "tool" (the tool name) and "arguments" (an object). The page runs it in the user's browser, and its real result arrives afterwards as a short message naming the call, with the result attached as JSON. Do not guess the result, and write nothing after the call: end your turn without any text, then answer from that message when it arrives.`
 ].join(' ');
 
 type ServerSetup = {
@@ -138,7 +138,7 @@ const toolsFor = ({ demoUrl, framedOrigins, panelUri } : ServerSetup) : Readonly
         },
         {
             name:        TOOL_NAME.CALL_SITE_TOOL,
-            title:       'Call a tool on the page',
+            title:       'WebMCP browser',
             description: `Runs a tool offered by a page (listed in the conversation context after the page loads in ${ TOOL_NAME.OPEN_BROWSER }). A panel loads the url and the page runs the tool in the user's browser; the result is not returned here but arrives afterwards as a short message naming the call, with the result attached as JSON.`,
             inputSchema: {
                 type:       'object',
@@ -201,7 +201,7 @@ const callTool = ({ name, args } : CallToolOptions) : Readonly<Record<string, un
             const callId = crypto.randomUUID();
 
             return toolResult({
-                text:       `Handed ${ tool } to ${ url } in the panel (call ${ callId.slice(0, 8) }). Its result is not available yet: it arrives as the next message, naming "call ${ callId.slice(0, 8) }", with the result attached as JSON. Tell the user the request was sent and wait for that message instead of guessing the outcome.`,
+                text:       `Handed ${ tool } to ${ url } in the panel (call ${ callId.slice(0, 8) }). Its result is not available yet: it arrives as the next message, naming "call ${ callId.slice(0, 8) }", with the result attached as JSON. Write nothing now: end your turn without any text, and answer the user from that message when it arrives, instead of guessing the outcome.`,
                 structured: { call_id: callId, url, tool, arguments: args.arguments ?? {}, opened_at: Date.now() }
             });
         }
