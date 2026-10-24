@@ -1,0 +1,30 @@
+{
+    "$schema": "https://unpkg.com/knip@latest/schema.json",
+    "entry": [
+        "src/index.ts",
+        "src/panel.ts",
+        "src/worker.ts",
+        "src/node.ts",
+        "src/cli.ts",
+        "scripts/*.ts",
+        "test/pages/*.ts",
+        "test/**/*.test.ts",
+        "src/**/*.test.ts"
+    ],
+    "project": [
+        "src/**/*.ts",
+        "scripts/**/*.ts",
+        "test/**/*.ts"
+    ],
+    "ignore": [],
+    "ignoreDependencies": [
+        "@vitest/browser-playwright",
+        "@vitest/coverage-istanbul"
+    ],
+    "exclude": [
+        "enumMembers",
+        "duplicates",
+        "binaries"
+    ],
+    "ignoreExportsUsedInFile": true
+}

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kiln &amp; Cotton</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --ink: #1d1a16; --muted: #7a7166; --line: #ebe4da; --paper: #fffdf9; --bg: #f6f1ea; --accent: #b4532a; --accent-ink: #fff; --tile: #efe7dc; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 Inter, system-ui, -apple-system, sans-serif; color: var(--ink); background: var(--bg); }
+  header { display: flex; align-items: center; gap: 18px; padding: 12px 18px; background: var(--paper); border-bottom: 1px solid var(--line); }
+  .brand { font: 600 19px/1 Fraunces, Georgia, serif; letter-spacing: -.01em; }
+  nav { display: flex; gap: 14px; color: var(--muted); font-size: 13px; }
+  .bag { margin-left: auto; display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 13px; font-weight: 500; }
+  .bag b { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--accent); font-size: 11px; }
+  .bag.bump { animation: bump .5s ease-out; }
+  @keyframes bump { 30% { transform: scale(1.08); } }
+  main { display: grid; grid-template-columns: 1fr 200px; gap: 16px; padding: 16px 18px; }
+  .hero { grid-column: 1 / -1; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .hero h1 { margin: 0; font: 600 22px/1.15 Fraunces, Georgia, serif; }
+  .hero span { color: var(--muted); font-size: 13px; }
+  .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; align-content: start; }
+  .card { display: flex; flex-direction: column; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .art { display: grid; place-items: center; aspect-ratio: 1; background: var(--tile); }
+  .art svg { width: 70%; height: 70%; }
+  .info { display: flex; flex-direction: column; gap: 2px; padding: 8px 9px 9px; }
+  .info .name { font-weight: 600; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .info .row { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+  .price { color: var(--muted); }
+  .add { border: 0; border-radius: 999px; padding: 4px 10px; background: var(--accent); color: var(--accent-ink); font: 500 12px Inter, sans-serif; cursor: pointer; }
+  .add:hover { filter: brightness(1.07); }
+  aside { align-self: start; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+  aside h2 { margin: 0 0 8px; font: 600 15px Fraunces, Georgia, serif; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { display: flex; justify-content: space-between; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  li:last-child { border-bottom: 0; }
+  li .qty { color: var(--muted); }
+  li.flash { animation: flash 1.2s ease-out; }
+  @keyframes flash { from { background: #fbe3d6; } to { background: transparent; } }
+  .empty { color: var(--muted); justify-content: center; padding: 14px 0; }
+  .total[hidden] { display: none; }
+  .total { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--ink); font-weight: 600; }
+  .checkout { width: 100%; margin-top: 10px; border: 0; border-radius: 10px; padding: 9px; background: var(--ink); color: #fff; font: 500 13px Inter, sans-serif; cursor: pointer; }
+  .checkout:disabled { opacity: .35; cursor: default; }
+  .scrim { position: fixed; inset: 0; display: grid; place-items: center; padding: 16px; background: rgba(29, 26, 22, .45); }
+  .scrim[hidden] { display: none; }
+  .modal { width: min(360px, 100%); padding: 18px 18px 16px; border-radius: 16px; background: var(--paper); box-shadow: 0 18px 50px rgba(0, 0, 0, .25); }
+  .modal h3 { margin: 0 0 6px; font: 600 17px/1.25 Fraunces, Georgia, serif; }
+  .modal p { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
+  .modal ul { margin: 0 0 14px; font-size: 13px; }
+  .modal li { border: 0; padding: 2px 0; justify-content: flex-start; }
+  .modal li::before { content: '•'; color: var(--accent); margin-right: 6px; }
+  .modal .actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .modal button { border-radius: 999px; padding: 7px 14px; font: 500 13px Inter, sans-serif; cursor: pointer; }
+  .modal .deny { border: 1px solid var(--line); background: transparent; color: var(--ink); }
+  .modal .allow { border: 0; background: var(--accent); color: var(--accent-ink); }
+  @media (max-width: 560px) { main { grid-template-columns: 1fr; } nav { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Kiln &amp; Cotton</div>
+  <nav><span>Mugs</span><span>Apparel</span><span>Odds &amp; ends</span></nav>
+  <div class="bag" id="bag">Cart <b id="count">0</b></div>
+</header>
+<main>
+  <div class="hero"><h1>Small things, made well.</h1><span>Free shipping over $40</span></div>
+  <section class="products" id="products"></section>
+  <aside>
+    <h2>Your cart</h2>
+    <ul id="cart"></ul>
+    <div class="total" id="total" hidden><span>Total</span><span id="total-amount"></span></div>
+    <button class="checkout" id="checkout" type="button" disabled>Checkout</button>
+  </aside>
+</main>
+<div class="scrim" id="consent" hidden role="dialog" aria-modal="true" aria-labelledby="consent-title">
+  <div class="modal">
+    <h3 id="consent-title">Let <span id="consent-who"></span> use your cart?</h3>
+    <p>It's asking to use this shop's tools. It will be able to:</p>
+    <ul><li>See the products and prices</li><li>Add items to your cart and see what's in it</li><li>Empty your cart</li></ul>
+    <div class="actions"><button class="deny" id="consent-deny" type="button">Don't allow</button><button class="allow" id="consent-allow" type="button">Allow</button></div>
+  </div>
+</div>
+<!-- glottis by name: from jsDelivr on GitHub Pages; the test server resolves it from node_modules. -->
+<script type="importmap">{ "imports": { "glottis": "https://cdn.jsdelivr.net/npm/glottis@0.4/+esm" } }</script>
+<script type="module" src="./shop.js"></script>
+</body>
+</html>

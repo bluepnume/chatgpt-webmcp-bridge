@@ -1,0 +1,91 @@
+{
+    "name": "chatgpt-webmcp-bridge",
+    "version": "0.1.0",
+    "description": "A ChatGPT plugin that lets ChatGPT use a web page's tools, served with glottis or registered with WebMCP, in a small browser panel inside the chat.",
+    "keywords": [
+        "chatgpt",
+        "webmcp",
+        "mcp",
+        "mcp-apps",
+        "plugin",
+        "glottis",
+        "iframe",
+        "ai-agents",
+        "cugel"
+    ],
+    "homepage": "https://github.com/bluepnume/chatgpt-webmcp-bridge#readme",
+    "bugs": {
+        "url": "https://github.com/bluepnume/chatgpt-webmcp-bridge/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/bluepnume/chatgpt-webmcp-bridge.git"
+    },
+    "license": "MIT",
+    "author": "Daniel Brain",
+    "type": "module",
+    "sideEffects": false,
+    "engines": {
+        "node": ">=24"
+    },
+    "bin": {
+        "chatgpt-webmcp-bridge": "bin/chatgpt-webmcp-bridge.js"
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/src/index.d.ts",
+            "import": "./dist/src/index.js"
+        },
+        "./worker": {
+            "types": "./dist/src/worker.d.ts",
+            "import": "./dist/src/worker.js"
+        },
+        "./node": {
+            "types": "./dist/src/node.d.ts",
+            "import": "./dist/src/node.js"
+        },
+        "./chrome": {
+            "types": "./dist/src/chrome.d.ts",
+            "import": "./dist/src/chrome.js"
+        },
+        "./package.json": "./package.json"
+    },
+    "files": [
+        "dist",
+        "bin",
+        "assets",
+        "README.md",
+        "LICENSE"
+    ],
+    "scripts": {
+        "build:panel": "node scripts/build-panel.ts",
+        "build": "npm run build:panel && cugel-scripts build",
+        "fix": "cugel-scripts fix --changed",
+        "fix:all": "cugel-scripts fix",
+        "imports:missing": "cugel-scripts imports:missing --changed",
+        "lint": "cugel-scripts lint",
+        "test:static": "npm run build:panel && cugel-scripts static",
+        "test:unit": "npm run build:panel && cugel-scripts test --coverage",
+        "test:watch": "cugel-scripts test --watch",
+        "test": "npm run test:static && npm run build && npm run test:unit",
+        "deploy:worker": "wrangler deploy",
+        "prepack": "npm run build"
+    },
+    "dependencies": {
+        "fflate": "^0.8.2"
+    },
+    "optionalDependencies": {
+        "playwright-core": "^1.55.0"
+    },
+    "devDependencies": {
+        "@vitest/browser-playwright": "^5.0.5",
+        "@vitest/coverage-istanbul": "^5.0.5",
+        "cugel-scripts": "^0.1.0",
+        "esbuild": "^0.28.0",
+        "glottis": "^0.4.0",
+        "wrangler": "4.60.0"
+    },
+    "main": "./dist/src/index.js",
+    "module": "./dist/src/index.js",
+    "types": "./dist/src/index.d.ts"
+}

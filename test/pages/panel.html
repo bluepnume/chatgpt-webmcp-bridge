@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><title>panel under test</title>
+<!-- The real panel, run as a module after the page is set up. Module scripts
+     run in document order, so panel-setup.ts builds the page before
+     src/panel.ts starts. Both sit in the head, because panel-setup.ts
+     replaces the body. (No dynamic import(): the test runner rewrites those,
+     and the rewrite only works in its own window.) -->
+<script type="module" src="/test/pages/panel-setup.ts"></script>
+<script type="module" src="/src/panel.ts"></script>
+</head>
+<body>
+</body>
+</html>

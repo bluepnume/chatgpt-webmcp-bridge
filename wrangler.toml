@@ -1,0 +1,11 @@
+# The public demo instance: https://webmcp.danielbrain.ai/chatgpt-webmcp-bridge/mcp
+# Deploy with `npm run deploy:worker` (needs `npx wrangler login` once).
+# To run your own copy instead, see docs/4-run-your-own-server.md.
+name = "chatgpt-webmcp-bridge"
+main = "src/worker.ts"
+compatibility_date = "2026-10-01"
+
+routes = [ { pattern = "webmcp.danielbrain.ai", custom_domain = true } ]
+
+[vars]
+BASE_PATH = "/chatgpt-webmcp-bridge"

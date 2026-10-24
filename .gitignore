@@ -1,0 +1,10 @@
+node_modules/
+dist/
+coverage/
+.tsbuildinfo
+.eslintcache
+*.log
+*.tgz
+.DS_Store
+.vitest/
+src/panel-script.generated.ts
