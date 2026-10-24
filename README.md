@@ -16,6 +16,20 @@ You: "add the blue mug to my cart"
   → "✓ add_to_cart ran on Kiln & Cotton" comes back, and ChatGPT tells you
 ```
 
+## What it looks like
+
+Open the browser, and it offers the demo shop:
+
+<img src="docs/images/chatgpt-1-start.png" alt="The bridge's browser panel in a ChatGPT chat, with a Try the demo shop button" width="600">
+
+Load a page, and ChatGPT says what it can do there. The status bar lists the page's tools, and the route they came by:
+
+<img src="docs/images/chatgpt-2-shop.png" alt="The demo shop open in the panel, with its four tools in the status bar and ChatGPT listing what it can do" width="600">
+
+Ask for something, and ChatGPT calls the page's tool. The page runs it, and the result comes back into the chat:
+
+<img src="docs/images/chatgpt-3-cart.png" alt="After asking to add the blue mug, the shop's cart shows it and ChatGPT confirms" width="600">
+
 ## Try it in three minutes
 
 You need ChatGPT with developer mode, which lets you add MCP servers that are not in ChatGPT's app directory (see OpenAI's [Apps SDK guide](https://developers.openai.com/apps-sdk)).
