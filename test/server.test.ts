@@ -313,4 +313,37 @@ describe('HTTP', () => {
 
         expect(await help.text()).toContain(`${ ORIGIN }/mcp`);
     });
+
+    it('serves the domain-verification token only when given one', async () => {
+        const withToken = createBridgeHandler({ basePath: '/bridge', challengeToken: 'tok-123' });
+        const withoutToken = createBridgeHandler({ basePath: '/bridge' });
+        const served = await withToken(new Request(`${ ORIGIN }/.well-known/openai-apps-challenge`));
+        const missing = await withoutToken(new Request(`${ ORIGIN }/.well-known/openai-apps-challenge`));
+        const posted = await withToken(new Request(`${ ORIGIN }/.well-known/openai-apps-challenge`, { method: 'POST', body: '' }));
+
+        expect(await served.text()).toBe('tok-123');
+        expect(served.headers.get('cache-control')).toBe('no-store');
+        expect(missing.status).toBe(404);
+        expect(posted.status).toBe(404);
+    });
+
+    it('serves support, privacy and terms pages under the base path', async () => {
+        const handler = createBridgeHandler({ basePath: '/bridge' });
+
+        for (const name of [ 'support', 'privacy', 'terms' ]) {
+            // eslint-disable-next-line no-await-in-loop -- one page at a time keeps the assertion readable
+            const response = await handler(new Request(`${ ORIGIN }/bridge/${ name }`));
+
+            expect(response.status).toBe(200);
+            expect(response.headers.get('content-type')).toContain('text/html');
+            // eslint-disable-next-line no-await-in-loop -- as above
+            expect(await response.text()).toContain('github.com/bluepnume/chatgpt-webmcp-bridge');
+        }
+
+        const elsewhere = await handler(new Request(`${ ORIGIN }/support`));
+        const unknown = await handler(new Request(`${ ORIGIN }/bridge/nope`));
+
+        expect(elsewhere.status).toBe(404);
+        expect(unknown.status).toBe(404);
+    });
 });

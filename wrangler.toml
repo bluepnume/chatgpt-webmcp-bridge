@@ -9,3 +9,5 @@ routes = [ { pattern = "webmcp.danielbrain.ai", custom_domain = true } ]
 
 [vars]
 BASE_PATH = "/chatgpt-webmcp-bridge"
+# Domain verification for the ChatGPT Directory listing, served at /.well-known/openai-apps-challenge.
+APPS_CHALLENGE_TOKEN = "GKi4hbrhX3VyTVs2J_f-40VThpjyG14TI0gaZY-h1Qk"

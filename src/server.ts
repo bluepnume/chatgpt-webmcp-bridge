@@ -24,6 +24,9 @@ export type BridgeServerOptions = {
     // Origins of the pages the panel may show, besides the demo's. ChatGPT
     // only lets the panel frame origins listed here, exactly: no wildcards.
     readonly frameDomains ?: ReadonlyArray<string>,
+    // The token OpenAI's plugin portal fetches from /.well-known/openai-apps-challenge
+    // to verify the domain, when the server is submitted to the Directory.
+    readonly challengeToken ?: string,
 };
 
 export type BridgeHandler = (request : Request) => Promise<Response>;
@@ -365,6 +368,35 @@ const handleRpc = async ({ request, setup, panelHtml } : HandleRpcOptions) : Pro
     }
 };
 
+const CHALLENGE_PATH = '/.well-known/openai-apps-challenge';
+
+const REPO_URL = `https://github.com/bluepnume/${ PACKAGE_NAME }`;
+
+type PolicyPage = { readonly title : string, readonly body : string };
+
+// The support, privacy and terms pages the Directory listing links to, served
+// under the base path so they share the MCP server's domain.
+const POLICY_PAGES : Readonly<Record<string, PolicyPage>> = {
+    support: {
+        title: 'Support',
+        body:  `<p>${ PACKAGE_NAME } is open source. For help, bug reports and feature requests, open an issue at <a href="${ REPO_URL }/issues">${ REPO_URL }/issues</a>. The docs are in the repository's README and docs folder.</p>`
+    },
+    privacy: {
+        title: 'Privacy',
+        body:  `<p>This server keeps no data. It answers ChatGPT's tool calls and hands it the browser panel, and it never sees the pages you load, the tools they offer or the results of calls: all of that happens in the panel, in your own browser, and in the chat.</p><p>A page you load in the panel is a normal web page. It sees what any site sees when you visit it, and it decides for itself whether to let ChatGPT use its tools. Tool results and the list of a page's tools are posted into your ChatGPT conversation, where OpenAI's privacy policy applies.</p><p>The hosted server runs on Cloudflare Workers, which may log requests for operational purposes. The demo shop stores its cart in your browser's local storage only.</p>`
+    },
+    terms: {
+        title: 'Terms',
+        body:  `<p>${ PACKAGE_NAME } is provided as is, without warranty of any kind, under the <a href="${ REPO_URL }/blob/main/LICENSE">MIT License</a>. It is an experiment for testing pages that offer tools to AI agents. The hosted server is a best-effort demo instance with no uptime guarantee; run your own copy for anything you depend on.</p><p>You are responsible for the pages you load in the panel and for what you let ChatGPT do on them. Only load pages you are entitled to use.</p>`
+    }
+};
+
+const policyPage = ({ title, body } : PolicyPage) : string => `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${ title }: ${ PACKAGE_NAME }</title>
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:40rem;margin:3rem auto;padding:0 1rem;color:#1b1f24}a{color:#2f6fde}</style></head>
+<body><h1>${ title }</h1>${ body }<p><a href="${ REPO_URL }">${ PACKAGE_NAME } on GitHub</a></p></body></html>
+`;
+
 const normalizeBasePath = (basePath : string) : string => {
     const trimmed = basePath.replace(/\/+$/, '');
 
@@ -380,7 +412,7 @@ const normalizeBasePath = (basePath : string) : string => {
 // Builds the request handler. Run it anywhere that speaks the standard
 // Request and Response: Cloudflare Workers, Deno, Bun, or Node with the
 // adapter in ./node.
-export const createBridgeHandler = ({ basePath = ``, demoUrl = DEFAULT_DEMO_URL, frameDomains = [] } : BridgeServerOptions = {}) : BridgeHandler => {
+export const createBridgeHandler = ({ basePath = ``, demoUrl = DEFAULT_DEMO_URL, frameDomains = [], challengeToken } : BridgeServerOptions = {}) : BridgeHandler => {
     const base = normalizeBasePath(basePath);
     const endpoint = `${ base }/mcp`;
 
@@ -428,6 +460,14 @@ export const createBridgeHandler = ({ basePath = ``, demoUrl = DEFAULT_DEMO_URL,
             );
         }
 
-        return new Response('Not found\n', { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8' } });
+        if (challengeToken !== undefined && pathname === CHALLENGE_PATH && request.method === 'GET') {
+            return new Response(challengeToken, { headers: { 'content-type': `text/plain; charset=utf-8`, 'cache-control': `no-store` } });
+        }
+
+        const policy = POLICY_PAGES[pathname.slice(base.length + 1)];
+
+        return policy && request.method === 'GET' && pathname.startsWith(`${ base }/`)
+            ? new Response(policyPage(policy), { headers: { 'content-type': 'text/html; charset=utf-8' } })
+            : new Response('Not found\n', { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8' } });
     };
 };

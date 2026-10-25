@@ -3,6 +3,7 @@
 //   BASE_PATH       where the server lives, e.g. "/chatgpt-webmcp-bridge"
 //   DEMO_URL        the page the panel's Try button opens; "none" for no button
 //   FRAME_DOMAINS   comma-separated origins the panel may frame
+//   APPS_CHALLENGE_TOKEN   the Directory's domain-verification token, if submitting
 
 import type { BridgeHandler, BridgeServerOptions } from './server';
 
@@ -12,6 +13,7 @@ export type WorkerEnv = {
     readonly BASE_PATH ?: string,
     readonly DEMO_URL ?: string,
     readonly FRAME_DOMAINS ?: string,
+    readonly APPS_CHALLENGE_TOKEN ?: string,
 };
 
 export const optionsFromEnv = (env : WorkerEnv) : BridgeServerOptions => ({
@@ -27,7 +29,10 @@ export const optionsFromEnv = (env : WorkerEnv) : BridgeServerOptions => ({
         },
     ...env.FRAME_DOMAINS === undefined
         ? {}
-        : { frameDomains: env.FRAME_DOMAINS.split(`,`).map(domain => domain.trim()).filter(Boolean) }
+        : { frameDomains: env.FRAME_DOMAINS.split(`,`).map(domain => domain.trim()).filter(Boolean) },
+    ...env.APPS_CHALLENGE_TOKEN === undefined
+        ? {}
+        : { challengeToken: env.APPS_CHALLENGE_TOKEN }
 });
 
 const handlers = new WeakMap<WorkerEnv, BridgeHandler>();

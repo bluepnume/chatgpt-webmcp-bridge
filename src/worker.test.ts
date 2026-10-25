@@ -11,6 +11,7 @@ describe('the Cloudflare Worker', () => {
         });
 
         expect(optionsFromEnv({ DEMO_URL: 'https://demo.example/' })).toEqual({ demoUrl: 'https://demo.example/' });
+        expect(optionsFromEnv({ APPS_CHALLENGE_TOKEN: 'tok' })).toEqual({ challengeToken: 'tok' });
     });
 
     it('serves under its base path, reusing one handler per environment', async () => {
