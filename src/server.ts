@@ -117,11 +117,11 @@ const toolsFor = ({ demoUrl, framedOrigins, panelUri } : ServerSetup) : Readonly
         {
             name:        TOOL_NAME.OPEN_BROWSER,
             title:       'WebMCP browser',
-            description: `Opens a small browser panel, at url if given. When the page loads, its tools are listed in the conversation context; call them with ${ TOOL_NAME.CALL_SITE_TOOL }. With no url the user enters one${
+            description: `Opens a small browser panel in the chat, showing the page at url if given. This is a testing tool for developers: the page loads in the user's own browser, and once it has loaded, the panel posts the tools that page offers into the conversation, each with its name, description and input schema, so every operation is declared before it can be called. Call one with ${ TOOL_NAME.CALL_SITE_TOOL }. With no url the user enters one${
                 demoUrl
                     ? ' or tries the demo shop'
                     : ''
-                }. Only pages on these origins can be shown: ${ framedOrigins.join(', ') || 'none' }.`,
+                }. The panel can only show pages on these origins: ${ framedOrigins.join(', ') || 'none' }.`,
             inputSchema: {
                 type:       'object',
                 properties: {
@@ -142,7 +142,7 @@ const toolsFor = ({ demoUrl, framedOrigins, panelUri } : ServerSetup) : Readonly
         {
             name:        TOOL_NAME.CALL_SITE_TOOL,
             title:       'WebMCP browser',
-            description: `Runs a tool offered by a page (listed in the conversation context after the page loads in ${ TOOL_NAME.OPEN_BROWSER }). A panel loads the url and the page runs the tool in the user's browser; the result is not returned here but arrives afterwards as a short message naming the call, with the result attached as JSON.`,
+            description: `Runs one of the tools a loaded page offers, by name, exactly as that page declared it in the conversation after ${ TOOL_NAME.OPEN_BROWSER }. The panel loads the url and the page itself runs the tool in the user's browser; this call only hands the request over and returns a call id. The result arrives afterwards as a short message naming the call, with the result attached as JSON. The effect is whatever the page's tool does, and it may change state on that page (for example, emptying a cart), so read the tool's description before calling it.`,
             inputSchema: {
                 type:       'object',
                 properties: {
@@ -153,7 +153,7 @@ const toolsFor = ({ demoUrl, framedOrigins, panelUri } : ServerSetup) : Readonly
                 required:             [ 'url', 'tool' ],
                 additionalProperties: false
             },
-            annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+            annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
             _meta:       { ...uiMeta, 'openai/toolInvocation/invoking': `Handing the call to the page…`, 'openai/toolInvocation/invoked': `Sent to the page` }
         }
     ];
