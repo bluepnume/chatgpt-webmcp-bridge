@@ -382,8 +382,44 @@ const POLICY_PAGES : Readonly<Record<string, PolicyPage>> = {
         body:  `<p>${ PACKAGE_NAME } is open source. For help, bug reports and feature requests, open an issue at <a href="${ REPO_URL }/issues">${ REPO_URL }/issues</a>. The docs are in the repository's README and docs folder.</p>`
     },
     privacy: {
-        title: 'Privacy',
-        body:  `<p>This server keeps no data. It answers ChatGPT's tool calls and hands it the browser panel, and it never sees the pages you load, the tools they offer or the results of calls: all of that happens in the panel, in your own browser, and in the chat.</p><p>A page you load in the panel is a normal web page. It sees what any site sees when you visit it, and it decides for itself whether to let ChatGPT use its tools. Tool results and the list of a page's tools are posted into your ChatGPT conversation, where OpenAI's privacy policy applies.</p><p>The hosted server runs on Cloudflare Workers, which may log requests for operational purposes. The demo shop stores its cart in your browser's local storage only.</p>`
+        title: 'Privacy policy',
+        body:  `<p class="meta">${ PACKAGE_NAME }, the ChatGPT plugin · Published by Daniel Brain · Last updated 26 October 2026</p>
+<p>${ PACKAGE_NAME } is a ChatGPT plugin that shows a small browser panel in the chat, loads a web page in it, and lets ChatGPT use the tools that page offers. It has no accounts, stores nothing on its own server, and does not sell or share personal data for advertising. This page explains exactly what it handles.</p>
+<h2>What the plugin collects, and why</h2>
+<ul>
+<li><b>Tool-call inputs.</b> ChatGPT sends this server the inputs of each tool call: for <code>open_browser</code>, the URL to open (optional); for <code>call_site_tool</code>, the page URL, the name of the page tool to run and the arguments the model chose for it. The server uses them for one thing: answering the call. For <code>open_browser</code> it returns a note that the panel is opening; for <code>call_site_tool</code> it returns a call id (a random ticket number) and tells the model to wait for the page's result. Nothing is written to a database or file.</li>
+<li><b>The panel's HTML.</b> ChatGPT fetches the browser panel from this server as a static resource. No personal data is involved.</li>
+<li><b>The page's tools and results.</b> The list of tools a page offers, and the result of each call, are produced in your own browser, inside the panel, and posted into your ChatGPT conversation as chat messages. They do not pass through this server.</li>
+<li><b>The demo shop's cart.</b> The demo shop (Kiln &amp; Cotton) keeps its cart in your browser's local storage and in the page URL. It has no backend.</li>
+</ul>
+<p>The server does not store your questions, conversations or ChatGPT account details, and it does not use the anonymous user identifier that ChatGPT may include with requests. It keeps no state between requests.</p>
+<h2>Who receives it</h2>
+<ul>
+<li><b>The page you load.</b> A page loaded in the panel is a normal web page: it sees what any site sees when you visit it (your IP address, browser and cookies for that site), and when ChatGPT uses one of its tools it receives that tool's name and arguments. The page decides for itself whether to let ChatGPT in, and what each tool does with its inputs, under that site's own privacy policy. The hosted instance only loads pages from origins listed in its configuration (currently the demo shop).</li>
+<li><b>Cloudflare</b> hosts the server as a Cloudflare Worker. Like any web host, it processes technical request data such as IP addresses and may keep short-lived request logs for operations, under <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare's privacy policy</a>.</li>
+<li><b>OpenAI</b> runs ChatGPT. What you type, the tool calls the model makes, and the messages the panel posts into the chat are all part of your ChatGPT conversation and are covered by <a href="https://openai.com/policies/privacy-policy/">OpenAI's privacy policy</a>.</li>
+</ul>
+<p>I do not sell personal data or share it with anyone else, except where the law requires it.</p>
+<h2>How long it is kept</h2>
+<ul>
+<li><b>Tool-call inputs:</b> handled in memory while the request is answered and not retained by the server.</li>
+<li><b>Cloudflare request logs:</b> kept by Cloudflare for its standard short operational period, then discarded.</li>
+<li><b>Your conversation,</b> including the page's tool list and results: kept by OpenAI as part of your ChatGPT history, under your ChatGPT settings.</li>
+<li><b>The demo shop's cart:</b> kept in your browser's local storage until you clear it or clear the site's data.</li>
+</ul>
+<h2>Your choices and controls</h2>
+<ul>
+<li>A page can ask you before letting ChatGPT use its tools. The demo shop shows an Allow / Don't allow prompt inside its own frame, which only you can answer, and it remembers your answer per cart.</li>
+<li>You choose which pages to open in the panel. ChatGPT can only call the tools a page offers; it cannot click around a page or read anything the page does not expose as a tool.</li>
+<li>You can delete the conversation in ChatGPT, uninstall the plugin, and clear the demo shop's cart by clearing that site's data in your browser.</li>
+<li>If you run your own copy of the server, none of your traffic reaches the hosted instance.</li>
+<li>You can ask me to show you, correct or delete anything about you that the plugin holds (in practice, nothing, since the server keeps no data) by emailing <a href="mailto:daniel@bluesuncorp.co.uk">daniel@bluesuncorp.co.uk</a>. If you are in the UK or the European Economic Area, you have these rights under data protection law, and you can complain to your local data protection authority. My legal basis for handling a tool call is that you asked ChatGPT to make it.</li>
+</ul>
+<p>The providers above may process data in the United States and in other countries where they operate.</p>
+<h2>Children</h2>
+<p>The plugin is not directed at children under 13.</p>
+<h2>Changes and contact</h2>
+<p>If this policy changes, the updated version will appear on this page with a new date. Questions go to <a href="mailto:daniel@bluesuncorp.co.uk">daniel@bluesuncorp.co.uk</a>.</p>`
     },
     terms: {
         title: 'Terms',
@@ -393,7 +429,7 @@ const POLICY_PAGES : Readonly<Record<string, PolicyPage>> = {
 
 const policyPage = ({ title, body } : PolicyPage) : string => `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${ title }: ${ PACKAGE_NAME }</title>
-<style>body{font:16px/1.5 system-ui,sans-serif;max-width:40rem;margin:3rem auto;padding:0 1rem;color:#1b1f24}a{color:#2f6fde}</style></head>
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:40rem;margin:3rem auto;padding:0 1rem;color:#1b1f24}a{color:#2f6fde}h2{font-size:1.15rem;margin-top:1.75rem}li{margin-bottom:.4rem}.meta{color:#6b7786;font-size:.9rem}</style></head>
 <body><h1>${ title }</h1>${ body }<p><a href="${ REPO_URL }">${ PACKAGE_NAME } on GitHub</a></p></body></html>
 `;
 

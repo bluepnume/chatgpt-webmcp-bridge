@@ -1,6 +1,6 @@
 {
     "name": "chatgpt-webmcp-bridge",
-    "version": "0.1.0",
+    "version": "0.1.2",
     "description": "A ChatGPT plugin that lets ChatGPT use a web page's tools, served with glottis or registered with WebMCP, in a small browser panel inside the chat.",
     "keywords": [
         "chatgpt",

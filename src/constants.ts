@@ -3,7 +3,7 @@
 export const PACKAGE_NAME = 'chatgpt-webmcp-bridge';
 
 // Kept in step with package.json by a test.
-export const VERSION = '0.1.0';
+export const VERSION = '0.1.2';
 
 // ChatGPT caches the panel, and its security settings, by the panel's URI.
 // So the URI carries the version, and the server adds a hash of its settings:
