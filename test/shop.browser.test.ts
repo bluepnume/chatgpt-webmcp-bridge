@@ -59,17 +59,17 @@ describe('the demo shop', () => {
 
         const shop = (await connecting).exports;
 
-        expect((await shop.list_products()).products.map(product => product.id)).toEqual([ `mug-blue`, `mug-red`, `tee-black`, `stickers` ]);
-        expect((await shop.add_to_cart({ product_id: `mug-red` })).cart).toEqual([ expect.objectContaining({ product_id: `mug-red`, quantity: 1 }) as unknown ]);
-        await shop.add_to_cart({ product_id: 'stickers', quantity: 3 });
+        expect((await shop.list_products()).products.map(product => product.id)).toEqual([ `sunshower-1977`, `for-you-1982`, `variety-1984`, `mint-jams-1982` ]);
+        expect((await shop.add_to_cart({ product_id: `for-you-1982` })).cart).toEqual([ expect.objectContaining({ product_id: `for-you-1982`, quantity: 1 }) as unknown ]);
+        await shop.add_to_cart({ product_id: 'mint-jams-1982', quantity: 3 });
         expect((await shop.view_cart()).cart).toHaveLength(2);
 
-        await expect(shop.add_to_cart({ product_id: 'mug-green' })).rejects.toThrow('Unknown product_id "mug-green"');
-        await expect(shop.add_to_cart({ product_id: `mug-red`, quantity: 0 })).rejects.toThrow(`quantity must be a positive integer.`);
+        await expect(shop.add_to_cart({ product_id: `plastic-love-1984` })).rejects.toThrow(`Unknown product_id "plastic-love-1984"`);
+        await expect(shop.add_to_cart({ product_id: `for-you-1982`, quantity: 0 })).rejects.toThrow(`quantity must be a positive integer.`);
 
         // The Add buttons share the cart; a click elsewhere in the list does nothing.
         await shopFrame.getByRole('button', { name: 'Add' }).first().click();
-        await shopFrame.getByText('Blue mug').first().click();
+        await shopFrame.getByText('Taeko Ohnuki, Sunshower').first().click();
         expect((await shop.view_cart()).cart).toHaveLength(3);
 
         expect((await shop.clear_cart()).cart).toEqual([]);

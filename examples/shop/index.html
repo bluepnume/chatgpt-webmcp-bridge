@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kiln &amp; Cotton</title>
+<title>Rising Sun Records</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -24,7 +24,7 @@
   .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; align-content: start; }
   .card { display: flex; flex-direction: column; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
   .art { display: grid; place-items: center; aspect-ratio: 1; background: var(--tile); }
-  .art svg { width: 70%; height: 70%; }
+  .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .info { display: flex; flex-direction: column; gap: 2px; padding: 8px 9px 9px; }
   .info .name { font-weight: 600; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .info .row { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
@@ -61,12 +61,12 @@
 </head>
 <body>
 <header>
-  <div class="brand">Kiln &amp; Cotton</div>
-  <nav><span>Mugs</span><span>Apparel</span><span>Odds &amp; ends</span></nav>
+  <div class="brand">Rising Sun Records</div>
+  <nav><span>City pop</span><span>Jazz fusion</span><span>New arrivals</span></nav>
   <div class="bag" id="bag">Cart <b id="count">0</b></div>
 </header>
 <main>
-  <div class="hero"><h1>Small things, made well.</h1><span>Free shipping over $40</span></div>
+  <div class="hero"><h1>Vintage Japanese vinyl, shipped from Tokyo.</h1><span>Free shipping over $100</span></div>
   <section class="products" id="products"></section>
   <aside>
     <h2>Your cart</h2>
@@ -79,7 +79,7 @@
   <div class="modal">
     <h3 id="consent-title">Let <span id="consent-who"></span> use your cart?</h3>
     <p>It's asking to use this shop's tools. It will be able to:</p>
-    <ul><li>See the products and prices</li><li>Add items to your cart and see what's in it</li><li>Empty your cart</li></ul>
+    <ul><li>See the records and prices</li><li>Add records to your cart and see what's in it</li><li>Empty your cart</li></ul>
     <div class="actions"><button class="deny" id="consent-deny" type="button">Don't allow</button><button class="allow" id="consent-allow" type="button">Allow</button></div>
   </div>
 </div>

@@ -28,17 +28,17 @@ You need ChatGPT with developer mode, which lets you add MCP servers that are no
 
 ## Use the demo shop
 
-1. Click **Try the demo shop**. The shop, Kiln & Cotton, loads in the panel.
+1. Click **Try the demo shop**. The shop, Rising Sun Records, loads in the panel.
 2. The shop asks **Let ChatGPT use your cart?** Click **Allow**.
 3. ChatGPT replies with what it can do in the shop.
-4. Ask: *add the blue mug to my cart*.
+4. Ask: *add Sunshower to my cart*.
 
-A fresh panel opens for the call, the older one folds away to one line, the mug appears in the cart, and ChatGPT confirms.
+A fresh panel opens for the call, the older one folds away to one line, the record appears in the cart, and ChatGPT confirms.
 
 ## Things to try next
 
 - *What's in my cart?*
-- *Add two stickers and a black T-shirt, then tell me the total.*
+- *Add For You and two copies of Mint Jams, then tell me the total.*
 - *Empty my cart.*
 
 ## Next

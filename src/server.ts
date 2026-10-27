@@ -390,7 +390,7 @@ const POLICY_PAGES : Readonly<Record<string, PolicyPage>> = {
 <li><b>Tool-call inputs.</b> ChatGPT sends this server the inputs of each tool call: for <code>open_browser</code>, the URL to open (optional); for <code>call_site_tool</code>, the page URL, the name of the page tool to run and the arguments the model chose for it. The server uses them for one thing: answering the call. For <code>open_browser</code> it returns a note that the panel is opening; for <code>call_site_tool</code> it returns a call id (a random ticket number) and tells the model to wait for the page's result. Nothing is written to a database or file.</li>
 <li><b>The panel's HTML.</b> ChatGPT fetches the browser panel from this server as a static resource. No personal data is involved.</li>
 <li><b>The page's tools and results.</b> The list of tools a page offers, and the result of each call, are produced in your own browser, inside the panel, and posted into your ChatGPT conversation as chat messages. They do not pass through this server.</li>
-<li><b>The demo shop's cart.</b> The demo shop (Kiln &amp; Cotton) keeps its cart in your browser's local storage and in the page URL. It has no backend.</li>
+<li><b>The demo shop's cart.</b> The demo shop (Rising Sun Records) keeps its cart in your browser's local storage and in the page URL. It has no backend.</li>
 </ul>
 <p>The server does not store your questions, conversations or ChatGPT account details, and it does not use the anonymous user identifier that ChatGPT may include with requests. It keeps no state between requests.</p>
 <h2>Who receives it</h2>

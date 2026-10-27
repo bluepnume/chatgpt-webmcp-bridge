@@ -10,10 +10,10 @@ A page offers tools in one of two ways:
 - **With [WebMCP](https://github.com/webmachinelearning/webmcp)**, the draft browser API for tools. Works in Chrome with WebMCP switched on, for testing.
 
 ```
-You: "add the blue mug to my cart"
+You: "add Sunshower to my cart"
   → ChatGPT calls the plugin
   → the panel in the chat runs add_to_cart on the shop page, in your browser
-  → "✓ add_to_cart ran on Kiln & Cotton" comes back, and ChatGPT tells you
+  → "✓ add_to_cart ran on Rising Sun Records" comes back, and ChatGPT tells you
 ```
 
 ## What it looks like
@@ -32,7 +32,7 @@ Allow it, and ChatGPT says what it can do there. The status bar lists the page's
 
 Ask for something, and ChatGPT calls the page's tool. The page runs it, and the result comes back into the chat:
 
-<img src="docs/images/chatgpt-4-cart.png" alt="After asking to add the blue mug, the shop's cart shows it and ChatGPT confirms" width="600">
+<img src="docs/images/chatgpt-4-cart.png" alt="After asking to add Sunshower, the shop's cart shows it and ChatGPT confirms" width="600">
 
 ## Try it in three minutes
 
@@ -45,7 +45,7 @@ You need ChatGPT with developer mode, which lets you add MCP servers that are no
    - **Server URL:** `https://webmcp.danielbrain.ai/chatgpt-webmcp-bridge/mcp`
    - **Authentication:** No authentication
 3. Start a chat, type `@ChatGPT WebMCP bridge open the browser`, then click **Try the demo shop**.
-4. Click **Allow** in the shop, then ask: *add the blue mug to my cart*.
+4. Click **Allow** in the shop, then ask: *add Sunshower to my cart*.
 
 That server is a best-effort demo instance. To run your own, see [Run your own server](docs/4-run-your-own-server.md).
 

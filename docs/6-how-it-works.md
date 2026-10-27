@@ -6,7 +6,7 @@ Three parties take part:
 - **The plugin**: its MCP server, and its **panel**, the sandboxed frame ChatGPT shows in the chat.
 - **The store**: the page whose tools are used, framed inside the panel.
 
-Below is one run, the demo shop with "add the blue mug to my cart", step by step.
+Below is one run, the demo shop with "add Sunshower to my cart", step by step.
 
 ## 1. Mentioning the plugin
 
@@ -38,12 +38,12 @@ Below is one run, the demo shop with "add the blue mug to my cart", step by step
 ## 5. ChatGPT learns the tools
 
 - The panel hands the tool list to ChatGPT with `ui/update-model-context`, which shows up as the Context chip. That makes the tools available with my next message, but doesn't make the model say anything.
-- So the panel also posts a message (`ui/message`): one readable line, "✓ Opened Kiln & Cotton: 4 tools (attached)", with the tools and instructions attached as JSON. The line is for me; the attachment is for the model.
+- So the panel also posts a message (`ui/message`): one readable line, "✓ Opened Rising Sun Records: 4 tools (attached)", with the tools and instructions attached as JSON. The line is for me; the attachment is for the model.
 - The model's turn is already over, so this starts a new one, and the model lists what it can do in the shop.
 
-## 6. Asking for the blue mug
+## 6. Asking for Sunshower
 
-- I say "add the blue mug to my cart".
+- I say "add Sunshower to my cart".
 - The model calls `call_site_tool` with the store's URL, the tool name `add_to_cart` and the arguments.
 - ChatGPT sends that to the MCP server, which only hands back a call id. The server can't run anything in my browser, so its job is just to say the result will arrive separately.
 - ChatGPT mounts a new panel for this call, because it gives every tool call with a UI a panel of its own. That is also the only way the call's arguments reach my browser.
@@ -53,14 +53,14 @@ Below is one run, the demo shop with "add the blue mug to my cart", step by step
 
 - It loads the same store URL, cart id included, so the store finds the same cart.
 - It connects with glottis again. The store remembers my Allow for this cart, so there's no second question.
-- It calls `add_to_cart` in the store, and the blue mug appears in my cart.
-- The panel remembers the call id. ChatGPT re-renders every panel when a chat is reloaded, and this stops the mug being added twice.
+- It calls `add_to_cart` in the store, and Sunshower appears in my cart.
+- The panel remembers the call id. ChatGPT re-renders every panel when a chat is reloaded, and this stops the record being added twice.
 
 ## 8. The result reaches ChatGPT
 
-- The panel posts a message: "✓ add_to_cart ran on Kiln & Cotton (call 3f2a1b9c). Result attached", with the result as JSON.
+- The panel posts a message: "✓ add_to_cart ran on Rising Sun Records (call 3f2a1b9c). Result attached", with the result as JSON.
 - The model is usually still writing its reply, and ChatGPT won't start a new turn on top of one in progress. So the panel sends it again without asking for a new turn, which slips it into the reply that's running.
-- The model reads the result and confirms: "1 blue mug added, $12". It answers from what actually happened on the page.
+- The model reads the result and confirms: "Sunshower added, $64". It answers from what actually happened on the page.
 
 ## Native WebMCP instead of glottis
 

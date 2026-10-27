@@ -211,13 +211,13 @@ describe('tools/call', () => {
     });
 
     it('hands a call to the panel with a fresh call id', async () => {
-        const params = { name: TOOL_NAME.CALL_SITE_TOOL, arguments: { url: `https://shop.example/`, tool: `add_to_cart`, arguments: { product_id: `mug-blue` } } };
+        const params = { name: TOOL_NAME.CALL_SITE_TOOL, arguments: { url: `https://shop.example/`, tool: `add_to_cart`, arguments: { product_id: `sunshower-1977` } } };
         const first = await rpc({ method: 'tools/call', params });
         const second = await rpc({ method: 'tools/call', params });
         const firstContent = first.body.result?.structuredContent as Readonly<Record<string, unknown>>;
         const secondContent = second.body.result?.structuredContent as Readonly<Record<string, unknown>>;
 
-        expect(firstContent).toMatchObject({ url: `https://shop.example/`, tool: `add_to_cart`, arguments: { product_id: `mug-blue` } });
+        expect(firstContent).toMatchObject({ url: `https://shop.example/`, tool: `add_to_cart`, arguments: { product_id: `sunshower-1977` } });
         expect(firstContent.call_id).toMatch(/^[\da-f-]{36}$/);
         expect(firstContent.call_id).not.toBe(secondContent.call_id);
         expect(JSON.stringify(first.body.result?.content)).toContain(`call ${ String(firstContent.call_id).slice(0, 8) }`);

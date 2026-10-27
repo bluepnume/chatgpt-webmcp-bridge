@@ -75,14 +75,14 @@ describe('the user opening a page', () => {
         await host.waitForText('tools', 'add_to_cart');
 
         expect(host.text('tools')).toContain('glottis');
-        expect(host.text('tab')).toBe('Kiln & Cotton');
+        expect(host.text('tab')).toBe('Rising Sun Records');
         // The shop added its cart id to its address; the panel follows it.
         expect((host.byId(`address`) as HTMLInputElement).value).toMatch(/\?cart=[\da-f]{8}$/);
 
         const intro = await host.waitForChat(1);
 
-        expect(intro.text).toBe('✓ Opened Kiln & Cotton: 4 tools (attached).');
-        expect(intro.data).toMatchObject({ opened_by: 'user', title: 'Kiln & Cotton' });
+        expect(intro.text).toBe('✓ Opened Rising Sun Records: 4 tools (attached).');
+        expect(intro.data).toMatchObject({ opened_by: 'user', title: 'Rising Sun Records' });
         await waitFor({ check: () => host.contexts.length > 0 });
         expect(host.contexts[0]).toContain('add_to_cart(product_id: string, quantity: integer?)');
     });
@@ -193,15 +193,15 @@ describe('the model opening a page', () => {
 describe('running a call', () => {
     it('runs a tool in the shop and reports its result', async () => {
         const host = await createFakeHost();
-        const callId = host.callTool({ url: shopUrl(), tool: `add_to_cart`, args: { product_id: `mug-blue`, quantity: 2 } });
+        const callId = host.callTool({ url: shopUrl(), tool: `add_to_cart`, args: { product_id: `sunshower-1977`, quantity: 2 } });
 
         await host.siteLocator().getByRole('button', { name: 'Allow' }).click();
 
         const message = await host.waitForChat(1);
         const data = message.data as ToolCallData;
 
-        expect(message.text).toBe(`✓ add_to_cart ran on Kiln & Cotton (call ${ callId.slice(0, 8) }). Result attached.`);
-        expect(data).toMatchObject({ call_id: callId, ok: true, result: { added: { product_id: `mug-blue`, quantity: 2 } } });
+        expect(message.text).toBe(`✓ add_to_cart ran on Rising Sun Records (call ${ callId.slice(0, 8) }). Result attached.`);
+        expect(data).toMatchObject({ call_id: callId, ok: true, result: { added: { product_id: `sunshower-1977`, quantity: 2 } } });
         await host.waitForText('status', 'sent');
     });
 

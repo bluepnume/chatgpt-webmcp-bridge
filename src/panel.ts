@@ -485,7 +485,7 @@ const runCall = async ({ url, name, args, callId } : RunCallOptions) : Promise<v
 };
 
 // open_browser with a url comes from the model in the middle of a request
-// ("open the shop and add a mug"). The page's tools only exist once it loads,
+// ("open the shop and add a record"). The page's tools only exist once it loads,
 // after the model's turn has ended, so they are posted into the conversation,
 // which starts the next turn and lets the model carry on.
 type OpenForModelOptions = { readonly url : string };

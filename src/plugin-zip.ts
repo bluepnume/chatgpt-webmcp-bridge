@@ -59,7 +59,7 @@ export const createPluginZip = ({
             composerIcon:     './assets/icon.png',
             defaultPrompt:    [
                 'Open the WebMCP browser.',
-                'Open the demo shop and add two blue mugs to my cart.',
+                'Open the demo shop and add Sunshower to my cart.',
                 'What tools does the page in the browser have?'
             ]
         }
